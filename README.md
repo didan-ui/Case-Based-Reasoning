@@ -1,33 +1,159 @@
-# Sistem Case-Based Reasoning (CBR) Putusan Mahkamah Agung
+# Case-Based Reasoning for Indonesian Criminal Court Decisions
 
-Proyek ini mengimplementasikan siklus lengkap Case-Based Reasoning (Retrieve, Reuse, Revise, Retain) untuk klasifikasi dan analisis hukum pada dokumen Putusan Mahkamah Agung.
+Sistem Case-Based Reasoning (CBR) untuk pencarian kasus hukum serupa menggunakan dokumen putusan pidana Indonesia. Proyek ini membandingkan dua metode retrieval, yaitu **TF-IDF** dan **IndoSBERT**, untuk menemukan kasus yang paling relevan berdasarkan deskripsi perkara.
 
-## 1. Persyaratan (Requirements)
-Pastikan Anda memiliki Python 3.x dan menginstal pustaka berikut:
+## Dataset
+
+Dataset berupa dokumen putusan pengadilan dalam format PDF yang diperoleh dari repositori GitHub.
+
+- Domain : Putusan Pidana
+- Format : PDF
+- Jumlah Dokumen : 50
+- Bahasa : Indonesia
+
+## Project Structure
+
+```
+Case-Based-Reasoning/
+│
+├── data/
+│   ├── raw/                 # PDF Putusan
+│   ├── extracted_text/      # Hasil ekstraksi PDF
+│   ├── processed/           # cases.csv & cases.json
+│   └── results/             # Hasil retrieval & evaluasi
+│
+├── notebooks/
+│   └── Case_Based_Reasoning.ipynb
+│
+├── README.md
+└── requirements.txt
+```
+
+## Workflow
+
+### 1. Case Base
+
+- Mengambil seluruh dokumen PDF
+- Ekstraksi teks menggunakan pdfplumber
+- Menyimpan hasil ekstraksi ke dalam file TXT
+
+### 2. Case Representation
+
+Setiap dokumen direpresentasikan menjadi:
+
+- Case ID
+- Nomor Perkara
+- Nama Terdakwa
+- Pengadilan
+- Pasal
+- Amar Putusan
+- Case Description
+- Full Text
+
+Selanjutnya disimpan menjadi:
+
+- cases.csv
+- cases.json
+
+### 3. Retrieval
+
+Dua metode retrieval digunakan.
+
+#### TF-IDF
+
+- Text Preprocessing
+- Stopword Removal
+- Stemming
+- TF-IDF Vectorization
+- Cosine Similarity
+
+#### IndoSBERT
+
+- Sentence Embedding
+- Cosine Similarity
+- Top-K Retrieval
+
+### 4. Reuse
+
+Solusi diperoleh menggunakan:
+
+- Weighted Similarity untuk prediksi pasal
+- Amar Putusan dari kasus dengan similarity tertinggi sebagai rekomendasi solusi
+
+### 5. Evaluation
+
+Evaluasi dilakukan menggunakan query yang dihasilkan secara otomatis dari setiap case description.
+
+Metrik yang digunakan:
+
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+
+Evaluasi dilakukan pada:
+
+- TF-IDF
+- IndoSBERT
+
+## Installation
+
+Clone repository
+
 ```bash
-pip install pdfplumber pandas scikit-learn numpy requests
+git clone https://github.com/didan-ui/Case-Based-Reasoning.git
 ```
 
-## 2. Struktur Folder
-Sistem secara otomatis akan mengelola struktur folder berikut:
-- `data/raw/`: Menyimpan file PDF asli.
-- `data/cleaned/`: Menyimpan hasil ekstraksi teks (.txt) dan `case_base.json`.
-- `data/processed/`: Menyimpan data terstruktur dalam format CSV dan JSON.
-- `input_pdfs/`: Folder sementara untuk proses unduhan/unggah.
+Masuk ke folder project
 
-## 3. Cara Menjalankan Pipeline
-1. **Tahap 1 (Acquisition):** Jalankan sel inisialisasi untuk mengunduh data dari repositori GitHub atau unggah secara manual.
-2. **Tahap 2 (Representation):** Jalankan fungsi ekstraksi untuk mengubah PDF menjadi teks terstruktur.
-3. **Tahap 3 (Retrieval):** Masukkan query fakta hukum pada fungsi `retrieve()` untuk mencari kasus serupa.
-4. **Tahap 4 & 5 (Reuse, Evaluation, Retention):** Gunakan fungsi `predict_outcome()` untuk klasifikasi otomatis dan `retain_case()` untuk menyimpan kasus baru ke database.
-
-## 4. Contoh Penggunaan
-```python
-query = "Terdakwa menyalahgunakan narkotika jenis sabu"
-hasil = retrieve(query, k=1)
-print(hasil)
+```bash
+cd Case-Based-Reasoning
 ```
 
-## 5. Kontributor
-- Nama Anggota Kelompok : Faza Abdillah (202310370311154) & Adhidhan Obiansyah (202310370311163)
-- Mata Kuliah: Penalaran Komputer - C
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## Required Libraries
+
+- pandas
+- numpy
+- pdfplumber
+- scikit-learn
+- nltk
+- Sastrawi
+- sentence-transformers
+- torch
+
+## Output
+
+Folder `data/results/` akan berisi:
+
+```
+tfidf_results.csv
+comparison_metrics.csv
+predictions.csv
+```
+
+## Retrieval Methods
+
+| Method | Description |
+|----------|------------|
+| TF-IDF | Keyword-based retrieval menggunakan TF-IDF dan Cosine Similarity |
+| IndoSBERT | Semantic retrieval menggunakan sentence embedding |
+
+## Evaluation Metrics
+
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+
+## Author
+
+Adhidhan Obiansyah
+Faza Abdillah
+
+Informatics Engineering
